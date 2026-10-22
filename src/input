@@ -1,0 +1,44 @@
+# Inputs for the SDPD program
+  N        50  50 
+  L        10.0 10.0
+  dim      2
+  dt       5.0e-5
+  Nsteps   1000000
+  overlap  4.0
+  rho      1.0
+  c        166.666667
+  P0       0.9
+  eta      24.56
+  zeta     0.0
+  #**** oldroyd ***
+  E          8.54165
+  tau        2.0
+  t_cut      20.0
+  N_subinter 7
+  x_integral 4.0
+  freq_filter 4
+  
+  ext_force_type 1
+  ext_force    1.0   0.0
+
+  freq_micro    10000
+  freq_macro    100
+  freq_walls    10000
+  freq_colloids 10000
+
+  wall 1
+  Vwall_bottom 0.0
+  Vwall_top 0.0
+
+  N_colloids 1
+  coll_R  1.0
+  coll_rho 1.0
+  coll_move 1
+  coll_x 5.0 5.0
+  coll_repulsion_cutoff 0.05
+  coll_repulsion_cuton  0.0
+  F0_repulsion 1.0
+  tau_repulsion 10.0
+  
+  new_sim 1
+  
