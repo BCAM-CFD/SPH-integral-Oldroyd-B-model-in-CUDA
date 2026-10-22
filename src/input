@@ -33,12 +33,12 @@
   N_colloids 1
   coll_R  1.0
   coll_rho 1.0
-  coll_move 1
+  coll_move 0
   coll_x 5.0 5.0
   coll_repulsion_cutoff 0.05
   coll_repulsion_cuton  0.0
   F0_repulsion 1.0
   tau_repulsion 10.0
   
-  new_sim 1
+  new_sim 0
   
