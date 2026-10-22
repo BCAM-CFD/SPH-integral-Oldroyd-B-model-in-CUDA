@@ -1,0 +1,55 @@
+/******************************************************
+This code has been developed by Adolfo Vazquez-Quesada,
+from the Department of Fundamental Physics at UNED, in
+Madrid, Spain.
+email: a.vazquez-quesada@fisfun.uned.es
+********************************************************/
+
+#include "kernel_functions.h"
+#include "config.h"
+#include "atomicAdd_double.cuh"
+
+//Function to calculate total kinetic energy and total momentum of the system
+__global__ void kernel_calculate_macro_vars(real* __restrict__ mass,
+					    real* __restrict__ vx,
+					    real* __restrict__ vy,
+					    real* __restrict__ vz,
+					    int*  __restrict__ type,
+					    real* __restrict__ coll_vx,
+					    real* __restrict__ coll_vy,
+					    real* __restrict__ coll_vz,
+					    real* __restrict__ kin_energy) {
+
+  int i = threadIdx.x + blockIdx.x * blockDim.x;
+  if (i >= N) return;
+
+  real part_sum;
+
+  //--- Loop over fluid particles ---
+  if (type[i] == 0) {
+    if (dim == 2)
+      part_sum = 0.5 * mass[i] * (vx[i] * vx[i] + vy[i] * vy[i]);
+    else //--- dim = 3 ---
+      part_sum = 0.5 * mass[i] * (vx[i] * vx[i] + vy[i] * vy[i] + vz[i] * vz[i]);
+  }
+
+  //--- Loop over colloids ---
+  if (i < N_colloids) {
+    if (dim == 2)
+      part_sum += 0.5 * coll_mass * (coll_vx[i] * coll_vx[i] + coll_vy[i] * coll_vy[i]);
+    else //--- dim = 3 ---
+      part_sum += 0.5 * coll_mass * (coll_vx[i] * coll_vx[i] + coll_vy[i] * coll_vy[i] +
+				     coll_vz[i] * coll_vz[i]);
+  }
+    
+  //-- The sum is saved in kin_energy --  
+#if __CUDA_ARCH__ >= 600
+  // modern GPUs -> native atomicAdd
+  atomicAdd(kin_energy, part_sum);
+#else
+  // old GPUs (< 6.0) -> use CAS emulation
+  atomicAdd_double_emulated(kin_energy, part_sum);
+#endif
+
+
+}

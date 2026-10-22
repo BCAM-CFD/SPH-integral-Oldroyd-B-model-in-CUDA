@@ -1,0 +1,34 @@
+NVCC = nvcc
+CFLAGS = -O3 --std=c++14 -arch=sm_86 --relocatable-device-code=true -dlto # sm_86 depends on your GPU
+# -g -G
+#beta: c-1-6 -> sm_86
+#beta: c-1-2 -> sm_61
+#dseta: c-4-0 -> sm_61
+#dseta: c-4-2 -> sm_86
+#portatil: sm_75
+
+# Source files
+HEADERS = config.h class_system.h kernel_functions.h atomicAdd_double.cuh
+CUDA_SOURCES = main.cu kernel_print_particles.cu kernel_print_constants.cu kernel_declare_constants.cu kernel_forces_and_vel_gradients.cu kernel_ext_force.cu kernel_move_sys_VV_part1.cu kernel_move_sys_VV_part2_and_Finger_der.cu kernel_W.cu kernel_gradW.cu kernel_densities.cu kernel_pressures.cu kernel_print_cell_list.cu kernel_cell_list.cu kernel_cell_ranges.cu kernel_print_cell_ranges.cu kernel_calculate_macro_vars.cu kernel_macro_vars_to_zero.cu kernel_collect_force_walls.cu kernel_collect_force_colloids.cu kernel_move_colloids_VV_part1.cu kernel_move_colloids_VV_part2.cu kernel_cell_colloids_list.cu kernel_initialize_cells.cu kernel_initialize_cell_colloids.cu kernel_cell_colloids_ranges.cu kernel_repulsion_force_colloids.cu kernel_quaternion_product.cu kernel_update_memory_array.cu kernel_update_Finger_tensor.cu kernel_stress_mem.cu kernel_memory_function.cu system_neighbours_search.cu system_calculate_density.cu system_calculate_pressure.cu system_calculate_forces.cu system_calculate_external_forces.cu system_V_Verlet_step1.cu system_V_Verlet_step2_and_Finger_der.cu system_print_macro_vars.cu  system_calculate_force_walls.cu system_calculate_force_colloids.cu kernel_build_posf.cu kernel_M_integration.cu
+CPP_SYSTEM_SOURCES  = system_read_input.cpp system_initialize_pointers.cpp system_constructor.cpp system_initialize.cpp system_print_info.cpp system_print_particles.cpp system_print_memory_array.cpp system_copy_pointers_to_device.cpp system_destructor.cpp system_print_output.cpp system_print_walls.cpp system_print_colloids.cpp system_initialize_particles_new_sim.cpp system_initialize_particles_old_sim.cpp system_update_memory.cpp system_print_gradv.cpp
+CPP_CONFIG_SOURCES  = config.h
+
+# Objects are created depparately for CUDA and C++
+CUDA_OBJECTS = $(CUDA_SOURCES:.cu=.o)
+CPP_SYSTEM_OBJECTS  = $(CPP_SYSTEM_SOURCES:.cpp=.o)
+
+EXECUTABLE = SPH_program
+
+all: $(EXECUTABLE)
+
+$(EXECUTABLE): $(CUDA_OBJECTS) $(CPP_SYSTEM_OBJECTS)
+	$(NVCC) $(CFLAGS) -o $@ $^
+
+%.o: %.cu $(HEADERS)
+	$(NVCC) $(CFLAGS) -c $< -o $@
+
+%.o: %.cpp $(HEADERS)
+	$(NVCC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -f *.o $(EXECUTABLE)
