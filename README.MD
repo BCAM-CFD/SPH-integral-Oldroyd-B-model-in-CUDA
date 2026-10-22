@@ -59,7 +59,7 @@ increase it.
 The compilation is done with the makefile file. 
 
 **Before compiling**, check the flag `-arch=sm_XX` in the makefile: it must match the
-compute capability of your GPU (e.g. sm_86 for Ampere, sm_75 for Turing, sm_61 for Pascal).
+compute capability of your GPU (e.g. sm_86 for Ampere, sm_75 for Turing, sm_61 for Pascal, etc).
 
 To compile, just write the following command in the command line:
 
